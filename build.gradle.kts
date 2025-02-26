@@ -3,3 +3,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
 }
+
+//dependencies{
+//    implementation("androidx.navigation:navigation-fragment-ktx:2.8.7")
+//}

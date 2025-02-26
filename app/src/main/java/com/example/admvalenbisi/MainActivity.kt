@@ -1,17 +1,21 @@
 package com.example.admvalenbisi
 
+//import MainFragment
 import android.content.Context
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.Menu
+import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.json.JSONArray
 import org.json.JSONException
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import androidx.recyclerview.widget.RecyclerView
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.commit
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,30 +27,54 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+//        inflateRecyclerView()
 
-        fun inflateRecyclerView(){
-            val rv : RecyclerView = findViewById<RecyclerView>(R.id.stationsList)
-            rv.layoutManager = LinearLayoutManager( this)
-            rv.adapter = StationAdapter( getStationsList( this))
+//        val navHost = findNavController(R.id.fragmentContainerView)
+
+        if (savedInstanceState == null) {
+            // Use commit to add the fragment
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                add(R.id.fragmentContainer, MainFragment())
+            }
         }
-        inflateRecyclerView()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
 
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//
+//    }
+
+    fun inflateRecyclerView(){
+        val rv : RecyclerView = findViewById<RecyclerView>(R.id.stationsList)
+        rv.layoutManager = LinearLayoutManager( this)
+        rv.adapter = StationAdapter( getStationsList( this))
+    }
+
+    fun navigateToDetail(){
+//        navHost.navigate(R.id.action_listFragment_to_stationFragment)
+    }
+
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//    }
 }
 
-fun sortListAscById( list: List<Station>): List<Station> {
-
-}
-
-fun sortListDescById( list: List<Station>): List<Station> {
-}
-
-fun sortListAscByName( list: List<Station>): List<Station> {
-}
-
-fun sortListDescByName( list: List<Station>): List<Station> {
-}
+//fun sortListAscById( list: List<Station>): List<Station> {
+//
+//}
+//
+//fun sortListDescById( list: List<Station>): List<Station> {
+//}
+//
+//fun sortListAscByName( list: List<Station>): List<Station> {
+//}
+//
+//fun sortListDescByName( list: List<Station>): List<Station> {
+//}
 
 
 fun getStationsList(context: Context): List<Station> {
