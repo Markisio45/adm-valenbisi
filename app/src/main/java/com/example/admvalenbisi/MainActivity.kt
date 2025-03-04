@@ -1,6 +1,5 @@
 package com.example.admvalenbisi
 
-//import MainFragment
 import android.content.Context
 import android.os.Bundle
 import android.view.Menu
@@ -33,10 +32,9 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             // Use commit to add the fragment
-            supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                add(R.id.fragmentContainer, MainFragment())
-            }
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, MainFragment())
+                .commit()
         }
     }
 

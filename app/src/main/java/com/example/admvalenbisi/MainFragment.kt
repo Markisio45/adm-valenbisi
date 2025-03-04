@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.admvalenbisi.R //replace it with your package
 import com.example.admvalenbisi.StationAdapter
-import com.example.admvalenbisi.databinding.FragmentMainBinding
+//import com.example.admvalenbisi.databinding.FragmentMainBinding
 import com.example.admvalenbisi.getStationsList
 
 
 class MainFragment : Fragment() {
-    private var _binding: FragmentMainBinding? = null
-    private val binding get() = _binding!!
+
+
 
     // 2. Use a constant for clarity and maintainability (MEDIUM PRIORITY)
     companion object {
@@ -31,17 +31,24 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.activity_main, container, false)
+        return inflater.inflate(R.layout.fragment_main, container, false)
+    }
+
+    fun inflateRecyclerView(view: View){
+        val rv : RecyclerView = view.findViewById<RecyclerView>(R.id.stationsList)
+        rv.layoutManager = LinearLayoutManager( context)
+        rv.adapter = StationAdapter( getStationsList( requireContext()))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val context = requireContext()
         super.onViewCreated(view, savedInstanceState)
 
-//        binding.stationsList.apply {
-//            layoutManager = LinearLayoutManager(context) // Use context instead of no-parameter constructor
-//            // 5. Pass the fragment's context to getStationsList (MEDIUM PRIORITY)
-//            adapter = StationAdapter(getStationsList(requireContext()))
-//        }
+
+        val rv : RecyclerView = view.findViewById<RecyclerView>(R.id.stationsList)
+        rv.layoutManager = LinearLayoutManager(requireContext())
+        val adapter : StationAdapter = StationAdapter( getStationsList(context))
+        rv.adapter = adapter
     }
 
 }
