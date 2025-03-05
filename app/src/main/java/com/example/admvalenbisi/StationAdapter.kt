@@ -4,7 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class StationAdapter( private val stationList:List<Station>) : RecyclerView.Adapter<StationHolder>() {
+class StationAdapter(
+    private val stationList:List<Station>,
+    private val onItemClick: (Station) -> Unit = {}) : RecyclerView.Adapter<StationHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -18,8 +20,11 @@ class StationAdapter( private val stationList:List<Station>) : RecyclerView.Adap
         holder: StationHolder,
         position: Int
     ) {
-        val item = stationList[position]
-        holder.render( item)
+        val item: Station = stationList[position]
+        holder.render( item, holder.itemView.context)
+        holder.itemView.setOnClickListener {
+            onItemClick( item)
+        }
     }
 
     override fun getItemCount(): Int = stationList.size

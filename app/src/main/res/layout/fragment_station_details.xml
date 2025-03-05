@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StationDetailsFragment" >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/detailsToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/stationDetailsId"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="18dp"
+        android:background="#FB4E4E"
+        android:gravity="center"
+        android:text="30"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detailsToolbar" />
+
+    <TextView
+        android:id="@+id/stationDetailsAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/stationDetailsId"
+        app:layout_constraintTop_toTopOf="@+id/stationDetailsId" />
+
+    <TextView
+        android:id="@+id/stationDetailsTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/tag_station_total_spaces"
+        app:layout_constraintStart_toStartOf="@+id/stationDetailsId"
+        app:layout_constraintTop_toBottomOf="@+id/stationDetailsId" />
+
+    <TextView
+        android:id="@+id/stationDetailsFree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tag_station_free_spaces"
+        app:layout_constraintStart_toStartOf="@+id/stationDetailsTotal"
+        app:layout_constraintTop_toBottomOf="@+id/stationDetailsTotal" />
+
+    <TextView
+        android:id="@+id/stationDetailsAvailable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tag_station_available_bikes"
+        app:layout_constraintStart_toStartOf="@+id/stationDetailsFree"
+        app:layout_constraintTop_toBottomOf="@+id/stationDetailsFree" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

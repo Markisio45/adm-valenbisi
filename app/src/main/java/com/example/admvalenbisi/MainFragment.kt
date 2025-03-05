@@ -9,13 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.admvalenbisi.R //replace it with your package
 import com.example.admvalenbisi.StationAdapter
-//import com.example.admvalenbisi.databinding.FragmentMainBinding
-import com.example.admvalenbisi.getStationsList
-
 
 class MainFragment : Fragment() {
-
-
 
     // 2. Use a constant for clarity and maintainability (MEDIUM PRIORITY)
     companion object {
@@ -36,19 +31,23 @@ class MainFragment : Fragment() {
 
     fun inflateRecyclerView(view: View){
         val rv : RecyclerView = view.findViewById<RecyclerView>(R.id.stationsList)
-        rv.layoutManager = LinearLayoutManager( context)
-        rv.adapter = StationAdapter( getStationsList( requireContext()))
+        rv.layoutManager = LinearLayoutManager( requireContext())
+
+        var adapter: StationAdapter = StationAdapter( getStationsList( requireContext())){
+            station ->
+                val fragment = StationDetailsFragment.newInstance( station)
+                parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+        rv.adapter = adapter
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val context = requireContext()
         super.onViewCreated(view, savedInstanceState)
-
-
-        val rv : RecyclerView = view.findViewById<RecyclerView>(R.id.stationsList)
-        rv.layoutManager = LinearLayoutManager(requireContext())
-        val adapter : StationAdapter = StationAdapter( getStationsList(context))
-        rv.adapter = adapter
+        inflateRecyclerView( view)
     }
 
 }

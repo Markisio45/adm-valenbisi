@@ -85,9 +85,10 @@ fun getStationsList(context: Context): List<Station> {
             var item = jsonArray.getJSONObject(i)
             var id: Int = item.getInt("number")
             var name: String = item.getString("address")
-            var freeBikes: Int = item.getInt("free")
-            var totalBikes: Int = item.getInt("total")
-            stationsList.add(Station(id, name, freeBikes, totalBikes))
+            var freeSpaces: Int = item.getInt("free")
+            var totalSpaces: Int = item.getInt("total")
+            var availableBikes: Int = item.getInt("available")
+            stationsList.add(Station(id, name, availableBikes, freeSpaces, totalSpaces))
         }
     } catch (e: JSONException) {
         e.printStackTrace()

@@ -4,10 +4,11 @@ import android.graphics.Color
 import android.os.Parcel
 import android.os.Parcelable
 
-data class Station( val id: Int, val name: String, val freeBikes: Int, val totalBikes: Int): Parcelable {
+data class Station( val id: Int, val name: String, val availableBikes: Int, val freeSpaces: Int, val totalSpaces: Int): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString() ?: "", // Handle null strings
+        parcel.readInt(),
         parcel.readInt(),
         parcel.readInt()
     )
@@ -15,8 +16,9 @@ data class Station( val id: Int, val name: String, val freeBikes: Int, val total
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
         parcel.writeString(name)
-        parcel.writeInt(freeBikes)
-        parcel.writeInt(totalBikes)
+        parcel.writeInt(availableBikes)
+        parcel.writeInt(freeSpaces)
+        parcel.writeInt(totalSpaces)
     }
 
     override fun describeContents(): Int {

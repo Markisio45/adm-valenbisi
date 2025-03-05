@@ -16,7 +16,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical">
 
             <TextView
                 android:id="@+id/bikesLabel"
@@ -24,8 +25,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="Bicis libres:"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="@string/tag_station_available_bikes"
+                app:layout_constraintBottom_toBottomOf="@+id/station_id"
                 app:layout_constraintStart_toStartOf="@+id/station_name"
                 app:layout_constraintTop_toBottomOf="@+id/station_name" />
 
@@ -34,19 +35,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:layout_marginTop="8dp"
                 android:text="nombre"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/station_id"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/station_id" />
 
             <TextView
                 android:id="@+id/station_id"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:background="#FB4E4E"
+                android:gravity="center"
                 android:padding="8dp"
                 android:text="id"
                 android:textAlignment="center"
@@ -56,30 +57,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="TextContrastCheck" />
 
-            <TextView
-                android:id="@+id/freebikes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="8"
-                app:layout_constraintStart_toEndOf="@+id/bikesLabel"
-                app:layout_constraintTop_toTopOf="@+id/bikesLabel" />
-
-            <TextView
-                android:id="@+id/slash"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="/"
-                app:layout_constraintStart_toEndOf="@+id/freebikes"
-                app:layout_constraintTop_toTopOf="@+id/freebikes" />
-
-            <TextView
-                android:id="@+id/totalBikes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="16"
-                app:layout_constraintStart_toEndOf="@+id/slash"
-                app:layout_constraintTop_toTopOf="@+id/slash" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
