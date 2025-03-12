@@ -56,7 +56,7 @@ enum class ReportType(val type: String) {
     }
 }
 
-@Entity
+@Entity(tableName = "report")
 data class Report(
     @PrimaryKey val id: Int,
     @ColumnInfo(name = "name") val name: String?,

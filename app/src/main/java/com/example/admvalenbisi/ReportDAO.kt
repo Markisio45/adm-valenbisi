@@ -7,10 +7,10 @@ import androidx.room.Update
 @Dao
 interface ReportDAO{
     @Query( "SELECT * FROM report")
-    fun getAll(): Array<Report>
+    fun getAll(): List<Report>
 
     @Query( "SELECT * FROM report WHERE station = :station")
-    fun getByStation( station: Int): Array<Report>
+    fun getByStation( station: Int): List<Report>
 
     @Update
     fun update(report: Report)
