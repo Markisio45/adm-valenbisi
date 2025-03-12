@@ -2,6 +2,8 @@
     <string name="app_name">adm.valenbisi</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sort_alphabetical">Ordenar Alfabeticamente</string>
+    <string name="sort_available_bikes">Ordenar por bicis disponibles</string>
     <string name="settings_title">Settings</string>
     <string name="tag_station_info">Bicis disponibles: %d/%d</string>
     <string name="tag_station_total_spaces">Espacios totales: %d</string>

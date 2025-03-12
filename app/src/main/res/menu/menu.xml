@@ -2,8 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/sort_alphabetical"
         android:orderInCategory="100"
-        android:title="@string/settings_title"
+        android:title="@string/sort_alphabetical"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/sort_available_bikes"
+        android:orderInCategory="100"
+        android:title="@string/sort_available_bikes"
         app:showAsAction="never" />
 </menu>

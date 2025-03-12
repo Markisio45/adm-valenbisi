@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.example.admvalenbisi.databinding.FragmentStationDetailsBinding
 
 class StationDetailsFragment : Fragment() {
@@ -32,25 +34,26 @@ class StationDetailsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+         super.onViewCreated(view, savedInstanceState)
 
         val ARG_STATION = "station"
 
         val station = arguments?.getParcelable<Station>(ARG_STATION)
         station?.let {
-            Log.d("StationDetailsFragment", "Station: $it")
-            Log.d("StationDetailsFragment", "binding: ${if (binding == Unit) "not null" else "null"}")
             binding.stationDetailsAddress?.text = it.name
-            Log.d("Check!", "check1")
             binding.stationDetailsId?.text = it.id.toString()
-            Log.d("Check!", "check2")
             binding.stationDetailsTotal?.text = view.context.getString(R.string.tag_station_total_spaces, it.totalSpaces)
-            Log.d("Check!", "check3")
             binding.stationDetailsFree?.text = view.context.getString(R.string.tag_station_free_spaces, it.freeSpaces)
-            Log.d("Check!", "check4")
             binding.stationDetailsAvailable?.text = view.context.getString(R.string.tag_station_available_bikes, it.availableBikes)
-            Log.d("Check!", "checkAll")
         }
+
+        val stationId = station?.id ?: return
+        val dao = ReportDatabase.getDatabase(requireContext()).reportDao()
+        lifecycleScope.launch {
+            val reports: Array<Report> = dao.getByStation( stationId)
+        }
+
+        Log.d( "STATIONDETAILSFRAGMENT", "STATION: $station")
     }
 
     companion object {

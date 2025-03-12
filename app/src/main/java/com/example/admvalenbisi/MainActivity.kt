@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.json.JSONArray
 import org.json.JSONException
@@ -36,12 +37,15 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.fragmentContainer, MainFragment())
                 .commit()
         }
+
+        val toolbar: Toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        menuInflater.inflate(R.menu.menu, menu)
+//        return true
+//    }
 
 //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 //
@@ -61,6 +65,8 @@ class MainActivity : AppCompatActivity() {
 //    }
 }
 
+
+// TODO: Sorting functions
 //fun sortListAscById( list: List<Station>): List<Station> {
 //
 //}
@@ -73,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 //
 //fun sortListDescByName( list: List<Station>): List<Station> {
 //}
-
+// TODO: Filtering functions
 
 fun getStationsList(context: Context): List<Station> {
     val stationsList = mutableListOf<Station>()
