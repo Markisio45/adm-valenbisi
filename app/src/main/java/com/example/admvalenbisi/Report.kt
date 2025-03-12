@@ -75,13 +75,15 @@ abstract class ReportDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: ReportDatabase? = null
 
-        fun getDatabase(context: Context): ReportDatabase {
+        suspend fun getInstance(context: Context): ReportDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     ReportDatabase::class.java,
                     "report_database" // Nombre de la BD
-                ).build()
+                )
+                .fallbackToDestructiveMigration()
+                .build()
                 INSTANCE = instance
                 instance
             }

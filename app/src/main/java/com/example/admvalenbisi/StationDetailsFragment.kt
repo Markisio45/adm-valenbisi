@@ -48,8 +48,9 @@ class StationDetailsFragment : Fragment() {
         }
 
         val stationId = station?.id ?: return
-        val dao = ReportDatabase.getDatabase(requireContext()).reportDao()
+
         lifecycleScope.launch {
+            val dao = ReportDatabase.getInstance(requireContext()).reportDao()
             val reports: List<Report> = dao.getByStation( stationId)
         }
 
