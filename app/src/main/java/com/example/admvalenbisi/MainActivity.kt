@@ -65,24 +65,6 @@ class MainActivity : AppCompatActivity() {
 //    }
 }
 
-
-// TODO: Sorting functions
-fun sortListAscByAvailableBikes( list: List<Station>): List<Station> {
-    return list.sortedBy {it.availableBikes}
-}
-
-fun sortListDescByAvailableBikes( list: List<Station>): List<Station> {
-    return list.sortedByDescending {it.availableBikes}
-}
-
-fun sortListAscByName( list: List<Station>): List<Station> {
-    return list.sortedBy {it.name}
-}
-
-fun sortListDescByName( list: List<Station>): List<Station> {
-    return list.sortedByDescending {it.name}
-}
-
 // TODO: Filtering functions
 
 fun getStationsList(context: Context): List<Station> {

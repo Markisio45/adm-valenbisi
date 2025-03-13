@@ -31,6 +31,6 @@ class StationAdapter(
 
     fun updateList(newList: List<Station>) {
         stationList = newList
-        notifyDataSetChanged() // Notifica que los datos han cambiado
+        notifyDataSetChanged()
     }
 }

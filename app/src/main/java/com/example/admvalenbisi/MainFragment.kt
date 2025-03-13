@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.admvalenbisi.R //replace it with your package
 import com.example.admvalenbisi.StationAdapter
+import java.text.Collator
+import java.text.Normalizer
+import java.util.Locale
 
 class MainFragment : Fragment() {
 
@@ -25,7 +28,12 @@ class MainFragment : Fragment() {
     var sorting_bikes_desc: Boolean = false;
 
     private lateinit var adapter: StationAdapter
-    var filteredStationList: List<Station> = listOf()
+    private var originalStationList: List<Station> = listOf()
+    private var filteredStationList: List<Station> = listOf()
+
+    private val collator: Collator = Collator.getInstance(Locale("es", "ES")).apply {
+        strength = Collator.PRIMARY // Ignora acentos y mayúsculas/minúsculas
+    }
 
     // 2. Use a constant for clarity and maintainability (MEDIUM PRIORITY)
     companion object {
@@ -61,6 +69,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        originalStationList = getStationsList(requireContext())
 
         val searchView: SearchView = view.findViewById<SearchView>(R.id.searchView)
         searchView.setOnClickListener {
@@ -74,7 +83,8 @@ class MainFragment : Fragment() {
                 newText?.let {
                     println("Texto actual: $it") // Aquí puedes hacer operaciones con el texto
                     // TODO: Llamada a función para filtrar por nombre
-                }
+                    filterStations(it)
+                } ?: filterStations("") // Si el texto es nulo, mostramos todo
                 return true
             }
 
@@ -82,6 +92,7 @@ class MainFragment : Fragment() {
                 // ✅ Se ejecuta cuando el usuario presiona "Enter" o el botón de búsqueda
                 query?.let {
                     println("Texto enviado: $it") // Aquí puedes hacer búsquedas o cualquier operación
+                    filterStations(query)
                 }
                 return true
             }
@@ -111,6 +122,7 @@ class MainFragment : Fragment() {
                         sorting_bikes_desc = false
                         sorting_alphabetical_desc = !sorting_alphabetical_desc
                         sortStationsByName()
+                        Log.d("DEBUG", "Lista inicial: ${getStationsList(requireContext())}")
 
                         true
                     }
@@ -136,14 +148,50 @@ class MainFragment : Fragment() {
 
     }
 
-    private fun sortStationsByName() {
+    private fun filterStations(query: String?) {
+        filteredStationList = originalStationList.let {
+            if (query.isNullOrEmpty()) {
+                it.toList() // Creamos una copia para evitar manipular el original
+            } else {
+                val normalizedQuery = normalizeText(query)
+                Log.d("Filter", "Texto actual: $query")
+                it.filter { station ->
+                    normalizeText(station.name).contains(normalizedQuery, ignoreCase = true)
+                }
+            }
+        }
+        Log.d("Filter", "Texto de búsqueda: $query")
+        Log.d("Filter", "Resultados: ${filteredStationList.size}")
+        Log.d("Filter", "Contenido de originalStationList: ${originalStationList.joinToString { it.name }}")
+
+        applyCurrentSorting()
+    }
+
+
+    /*private fun sortStationsByName() {
         filteredStationList = if (sorting_alphabetical_desc) {
             filteredStationList.sortedByDescending { it.name }
         } else {
             filteredStationList.sortedBy { it.name }
         }
         adapter.updateList(filteredStationList)
+    }*/
+
+    private fun sortStationsByName() {
+        Log.d("Sort", "Tamaño de la lista antes de ordenar: ${filteredStationList.size}")
+
+        filteredStationList = if (sorting_alphabetical_desc) {
+            filteredStationList.sortedWith { a, b -> collator.compare(b.name, a.name) }
+        } else {
+            filteredStationList.sortedWith { a, b -> collator.compare(a.name, b.name) }
+        }
+
+        Log.d("Sort", "Tamaño de la lista después de ordenar: ${filteredStationList.size}")
+        filteredStationList.forEach { Log.d("Sort", "Estación: ${it.name}") }
+
+        adapter.updateList(filteredStationList)
     }
+
 
     private fun sortStationsByAvailableBikes() {
         filteredStationList = if (sorting_bikes_desc) {
@@ -152,5 +200,19 @@ class MainFragment : Fragment() {
             filteredStationList.sortedBy { it.availableBikes }
         }
         adapter.updateList(filteredStationList)
+    }
+
+    private fun applyCurrentSorting() {
+        if (sorting_alphabetical_desc || sorting_bikes_desc) {
+            if (sorting_alphabetical_desc) sortStationsByName()
+            if (sorting_bikes_desc) sortStationsByAvailableBikes()
+        } else {
+            adapter.updateList(filteredStationList)
+        }
+    }
+
+    private fun normalizeText(text: String): String {
+        return Normalizer.normalize(text, Normalizer.Form.NFD)
+            .replace("\\p{Mn}+".toRegex(), "") // Elimina los diacríticos (acentos)
     }
 }
