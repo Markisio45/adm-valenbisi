@@ -21,8 +21,11 @@ import com.example.admvalenbisi.StationAdapter
 
 class MainFragment : Fragment() {
 
-    var sorting_alphabetical_desc : Boolean = false;
-    var sorting_bikes_desc : Boolean = false;
+    var sorting_alphabetical_desc: Boolean = false;
+    var sorting_bikes_desc: Boolean = false;
+
+    private lateinit var adapter: StationAdapter
+    var filteredStationList: List<Station> = listOf()
 
     // 2. Use a constant for clarity and maintainability (MEDIUM PRIORITY)
     companion object {
@@ -41,14 +44,13 @@ class MainFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
-    fun inflateRecyclerView(view: View){
-        val rv : RecyclerView = view.findViewById<RecyclerView>(R.id.stationsList)
-        rv.layoutManager = LinearLayoutManager( requireContext())
+    fun inflateRecyclerView(view: View) {
+        val rv: RecyclerView = view.findViewById<RecyclerView>(R.id.stationsList)
+        rv.layoutManager = LinearLayoutManager(requireContext())
 
-        var adapter: StationAdapter = StationAdapter( getStationsList( requireContext())){
-            station ->
-                val fragment = StationDetailsFragment.newInstance( station)
-                parentFragmentManager.beginTransaction()
+        adapter = StationAdapter (getStationsList(requireContext())) { station ->
+            val fragment = StationDetailsFragment.newInstance(station)
+            parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
                 .addToBackStack(null)
                 .commit()
@@ -88,36 +90,41 @@ class MainFragment : Fragment() {
         view.setOnTouchListener { _, _ ->
             view.performClick()
             searchView.clearFocus() // Quitar foco
-            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0) // Ocultar teclado
             false
         }
 
 
         val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object: MenuProvider {
+        menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                Log.d( "FRAGMENT", "MENU: ${menu}")
+                Log.d("FRAGMENT", "MENU: ${menu}")
                 menuInflater.inflate(R.menu.menu, menu)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId){
+                return when (menuItem.itemId) {
                     R.id.sort_alphabetical -> {
                         Log.d("MENU", "Pulsado!")
                         sorting_bikes_desc = false
                         sorting_alphabetical_desc = !sorting_alphabetical_desc
+                        sortStationsByName()
 
                         true
                     }
+
                     R.id.sort_available_bikes -> {
                         sorting_alphabetical_desc = false
                         sorting_bikes_desc = !sorting_bikes_desc
 
                         // Llamada a función de sorting
+                        sortStationsByAvailableBikes()
 
                         true
                     }
+
                     else -> false
                 }
             }
@@ -125,8 +132,25 @@ class MainFragment : Fragment() {
 
         requireActivity().title = "Valenbisi"
 
-        inflateRecyclerView( view)
+        inflateRecyclerView(view)
 
     }
 
+    private fun sortStationsByName() {
+        filteredStationList = if (sorting_alphabetical_desc) {
+            filteredStationList.sortedByDescending { it.name }
+        } else {
+            filteredStationList.sortedBy { it.name }
+        }
+        adapter.updateList(filteredStationList)
+    }
+
+    private fun sortStationsByAvailableBikes() {
+        filteredStationList = if (sorting_bikes_desc) {
+            filteredStationList.sortedByDescending { it.availableBikes }
+        } else {
+            filteredStationList.sortedBy { it.availableBikes }
+        }
+        adapter.updateList(filteredStationList)
+    }
 }

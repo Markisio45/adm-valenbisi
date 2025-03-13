@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class StationAdapter(
-    private val stationList:List<Station>,
+    private var stationList:List<Station>,
     private val onItemClick: (Station) -> Unit = {}) : RecyclerView.Adapter<StationHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -29,4 +29,8 @@ class StationAdapter(
 
     override fun getItemCount(): Int = stationList.size
 
+    fun updateList(newList: List<Station>) {
+        stationList = newList
+        notifyDataSetChanged() // Notifica que los datos han cambiado
+    }
 }
