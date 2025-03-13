@@ -167,19 +167,9 @@ class MainFragment : Fragment() {
         applyCurrentSorting()
     }
 
-
-    /*private fun sortStationsByName() {
-        filteredStationList = if (sorting_alphabetical_desc) {
-            filteredStationList.sortedByDescending { it.name }
-        } else {
-            filteredStationList.sortedBy { it.name }
-        }
-        adapter.updateList(filteredStationList)
-    }*/
-
     private fun sortStationsByName() {
         Log.d("Sort", "Tamaño de la lista antes de ordenar: ${filteredStationList.size}")
-
+        filteredStationList = originalStationList
         filteredStationList = if (sorting_alphabetical_desc) {
             filteredStationList.sortedWith { a, b -> collator.compare(b.name, a.name) }
         } else {
