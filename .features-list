@@ -1,0 +1,30 @@
+[ Requiered Tasks ]
+  1)
+    *. Read from a JSON file - DONE
+    *. Display into a RecyclerView - DONE
+  2)
+    *. Display details of stations - DONE
+    *. Sorting options in menu
+  3)
+    *. Implement Room Database - DOING
+    *. Button to crate incident
+    *. RecyclerView to display incidents in details of a station
+  4)
+    *. Implement the GET HTTP call to refrest data
+
+
+[ Optional Tasks ]
+  1)
+    *. Use CardView - DONE
+    *. Buttons to sort by name, available bikes... - DOING
+    *. Change the color of the number of bikes based on availability - DONE
+  2)
+    *. Use fragments instead of Activities - DONE
+    *. Implement search bar - DOING
+  3)
+    *. Use camera
+    *. Store BLOB into database
+  4)
+    *. Implement refresh Button
+    *. Use GPS to calculate distance
+    *. Order the list by distance
