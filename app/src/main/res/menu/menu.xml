@@ -11,4 +11,9 @@
         android:orderInCategory="100"
         android:title="@string/sort_available_bikes"
         app:showAsAction="never" />
+<!--    <item-->
+<!--        android:id="@+id/create_report"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="@string/create_report"-->
+<!--        app:showAsAction="never" />-->
 </menu>

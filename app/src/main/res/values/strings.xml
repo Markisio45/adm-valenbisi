@@ -4,9 +4,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sort_alphabetical">Ordenar Alfabeticamente</string>
     <string name="sort_available_bikes">Ordenar por bicis disponibles</string>
+    <string name="create_report">Crear reporte</string>">
     <string name="settings_title">Settings</string>
     <string name="tag_station_info">Bicis disponibles: %d/%d</string>
     <string name="tag_station_total_spaces">Espacios totales: %d</string>
     <string name="tag_station_free_spaces">Espacios libres: %d</string>
     <string name="tag_station_available_bikes">Bicis disponibles: %d</string>
+    <string name="no_reports">No hay reportes!</string>
 </resources>

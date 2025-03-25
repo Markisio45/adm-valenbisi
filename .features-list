@@ -6,9 +6,9 @@
     *. Display details of stations - DONE
     *. Sorting options in menu
   3)
-    *. Implement Room Database - DOING
-    *. Button to crate incident
-    *. RecyclerView to display incidents in details of a station
+    *. Implement Room Database - DOING // TODO: BLOB image
+    *. Button to crate incident - DOING
+    *. RecyclerView to display incidents in details of a station - DONE
   4)
     *. Implement the GET HTTP call to refrest data
 

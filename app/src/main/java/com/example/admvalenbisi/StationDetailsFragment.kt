@@ -1,5 +1,6 @@
 package com.example.admvalenbisi
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -52,10 +53,36 @@ class StationDetailsFragment : Fragment() {
         lifecycleScope.launch {
             val dao = ReportDatabase.getInstance(requireContext()).reportDao()
             val reports: List<Report> = dao.getByStation( stationId)
+
+            if( reports.isEmpty()) {
+                binding.noReports?.visibility = View.VISIBLE
+                binding.stationReportsList?.visibility = View.GONE
+            } else {
+                binding.noReports?.visibility = View.GONE
+                binding.stationReportsList?.visibility = View.VISIBLE
+            }
+
+            Log.d( "STATIONDETAILSFRAGMENT", "REPORTS: $reports")
+        }
+
+        binding.fabReport.setOnClickListener {
+            val intent = Intent(requireContext(), ReportActivity::class.java)
+            startActivity(intent)
         }
 
         Log.d( "STATIONDETAILSFRAGMENT", "STATION: $station")
     }
+
+//    fun getStationReports( stationId: Int) -> List<Report> {
+//        lifecycleScope.launch {
+//            val dao = ReportDatabase.getInstance(requireContext()).reportDao()
+//            val reports: List<Report> = dao.getByStation( stationId)
+//
+//            return reports
+//        }
+//
+//        return reports
+//    }
 
     companion object {
         /**
