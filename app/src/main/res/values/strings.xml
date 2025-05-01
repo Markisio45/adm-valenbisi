@@ -11,4 +11,11 @@
     <string name="tag_station_free_spaces">Espacios libres: %d</string>
     <string name="tag_station_available_bikes">Bicis disponibles: %d</string>
     <string name="no_reports">No hay reportes!</string>
+
+<!--    STRINGS REPORT -->
+
+    <string name="report_title">Titulo: </string>
+    <string name="report_description">Descripción: </string>
+    <string name="report_status">Estado: </string>
+    <string name="report_type">Tipo: </string>
 </resources>

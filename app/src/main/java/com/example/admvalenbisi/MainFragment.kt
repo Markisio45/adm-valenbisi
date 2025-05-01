@@ -57,6 +57,7 @@ class MainFragment : Fragment() {
         rv.layoutManager = LinearLayoutManager(requireContext())
 
         adapter = StationAdapter (getStationsList(requireContext())) { station ->
+            Log.d("DEBUG", "Station clicked: $station")
             val fragment = StationDetailsFragment.newInstance(station)
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
@@ -98,14 +99,14 @@ class MainFragment : Fragment() {
             }
         })
 
-        view.setOnTouchListener { _, _ ->
-            view.performClick()
-            searchView.clearFocus() // Quitar foco
-            val imm =
-                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0) // Ocultar teclado
-            false
-        }
+//        view.setOnTouchListener { _, _ ->
+//            view.performClick()
+//            searchView.clearFocus() // Quitar foco
+//            val imm =
+//                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//            imm.hideSoftInputFromWindow(view.windowToken, 0) // Ocultar teclado
+//            false
+//        }
 
 
         val menuHost: MenuHost = requireActivity()

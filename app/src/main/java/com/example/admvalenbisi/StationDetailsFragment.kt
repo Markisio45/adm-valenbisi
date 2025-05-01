@@ -53,11 +53,22 @@ class StationDetailsFragment : Fragment() {
         lifecycleScope.launch {
             val dao = ReportDatabase.getInstance(requireContext()).reportDao()
             val reports: List<Report> = dao.getByStation( stationId)
+            val reportAdapter = ReportAdapter( reports)
+            binding.stationReportsList?.adapter = reportAdapter
+            binding.stationReportsList?.layoutManager = androidx.recyclerview.widget.LinearLayoutManager( requireContext())
+
+//            reportAdapter.onItemClick = { report ->
+//                val intent = Intent(requireContext(), ReportActivity::class.java)
+//                intent.putExtra("report", report)
+//                startActivity(intent)
+//            }
 
             if( reports.isEmpty()) {
+                Log.d( "STATIONDETAILSFRAGMENT", "NO REPORTS")
                 binding.noReports?.visibility = View.VISIBLE
                 binding.stationReportsList?.visibility = View.GONE
             } else {
+                Log.d( "STATIONDETAILSFRAGMENT", "SI REPORTS")
                 binding.noReports?.visibility = View.GONE
                 binding.stationReportsList?.visibility = View.VISIBLE
             }
@@ -65,8 +76,11 @@ class StationDetailsFragment : Fragment() {
             Log.d( "STATIONDETAILSFRAGMENT", "REPORTS: $reports")
         }
 
+
+
         binding.fabReport.setOnClickListener {
             val intent = Intent(requireContext(), ReportActivity::class.java)
+            intent.putExtra("stationId", stationId)
             startActivity(intent)
         }
 

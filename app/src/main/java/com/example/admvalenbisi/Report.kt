@@ -58,15 +58,15 @@ enum class ReportType(val type: String) {
 
 @Entity(tableName = "report")
 data class Report(
-    @PrimaryKey val id: Int,
-    @ColumnInfo(name = "title") val title: String?,
-    @ColumnInfo(name = "description") val description: String?,
-    @ColumnInfo(name = "station") val station: Int?,
-    @ColumnInfo(name = "status") val status: ReportStatus?,
-    @ColumnInfo(name = "type") val type: ReportType?
+    @PrimaryKey(autoGenerate = true) val id: Int? = null,
+    @ColumnInfo(name = "title") var title: String?,
+    @ColumnInfo(name = "description") var description: String?,
+    @ColumnInfo(name = "station") var station: Int?,
+    @ColumnInfo(name = "status") var status: ReportStatus?,
+    @ColumnInfo(name = "type") var type: ReportType?
 )
 
-@Database( entities = [Report::class], version = 2, exportSchema = false)
+@Database( entities = [Report::class], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ReportDatabase : RoomDatabase() {
     abstract fun reportDao(): ReportDAO

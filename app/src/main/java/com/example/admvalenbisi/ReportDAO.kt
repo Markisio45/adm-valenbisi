@@ -1,6 +1,7 @@
 package com.example.admvalenbisi
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 
@@ -14,4 +15,7 @@ interface ReportDAO{
 
     @Update
     suspend fun update(report: Report)
+
+    @Insert
+    suspend fun insert(report: Report)
 }
