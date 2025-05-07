@@ -18,10 +18,16 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
 class ReportActivity : AppCompatActivity() {
+
+    private var report: Report? = null
+    private var isEditMode: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -34,13 +40,23 @@ class ReportActivity : AppCompatActivity() {
 
         val stationId = intent.getIntExtra("stationId", -1)
 
-        var report: Report = Report(
+        report = intent.getParcelableExtra<Report>("report")
+
+
+
+        if( report == null) {
+            report = Report(
                 station = stationId,
                 status = ReportStatus.OPEN,
                 title = "Título del reporte",
                 description = "Descripción del reporte",
                 type = ReportType.MECHANICAL
             )
+            this.title = "New Report"
+        } else {
+            this.title = "Edit Report"
+            isEditMode = true
+        }
 
         val spinnerStatus: Spinner = findViewById(R.id.spinner_status)
 
@@ -61,11 +77,10 @@ class ReportActivity : AppCompatActivity() {
                 id: Long
             ) {
                 val selectedOption = options[position]
-
                 when( selectedOption){
-                    "Abierto" -> report.status = ReportStatus.OPEN
-                    "Procesando" -> report.status = ReportStatus.PROCESSING
-                    "Cerrado" -> report.status = ReportStatus.CLOSED
+                    "Abierto" -> report?.let { it.status = ReportStatus.OPEN}
+                    "Procesando" -> report?.let { it.status = ReportStatus.PROCESSING}
+                    "Cerrado" -> report?.let { it.status = ReportStatus.CLOSED}
                 }
             }
 
@@ -95,10 +110,10 @@ class ReportActivity : AppCompatActivity() {
                 val selectedOption = options_type[position]
 
                 when( selectedOption){
-                    "Mecánica" -> report.type = ReportType.MECHANICAL
-                    "Electrica" -> report.type = ReportType.ELECTRIC
-                    "Pintura" -> report.type = ReportType.PAINTING
-                    "Albañilería" -> report.type = ReportType.MASONRY
+                    "Mecánica" -> report?.let { it.type = ReportType.MECHANICAL }
+                    "Electrica" -> report?.let { it.type = ReportType.ELECTRIC }
+                    "Pintura" -> report?.let { it.type = ReportType.PAINTING }
+                    "Albañilería" -> report?.let { it.type = ReportType.MASONRY }
                 }
             }
 
@@ -106,18 +121,21 @@ class ReportActivity : AppCompatActivity() {
                 // Acción cuando no se selecciona nada
             }
         }
+        if( isEditMode)
+            setElements( report.let { it!! } )
 
         // Guardar el reporte
         val saveButton: Button = findViewById(R.id.confirmButton)
 
         saveButton.setOnClickListener {
             lifecycleScope.launch {
-                report.title = findViewById<TextView>(R.id.report_edit_title).text.toString()
-                report.description = findViewById<TextView>(R.id.report_edit_description).text.toString()
-                saveReport(report)
+                report?.let {it.title = findViewById<TextView>(R.id.report_edit_title).text.toString()}
+                report?.let {it.description = findViewById<TextView>(R.id.report_edit_description).text.toString()}
+                report?.let {saveReport(it)}
             }
 
             Toast.makeText(this, "Reporte guardado", Toast.LENGTH_SHORT).show()
+            onBackPressedDispatcher.onBackPressed()
         }
 
 
@@ -134,15 +152,49 @@ class ReportActivity : AppCompatActivity() {
             }
         })
 
-            this.title = "New Report"
 
+    }
+
+    private fun setElements(report: Report) {
+        val title: TextView = findViewById(R.id.report_edit_title)
+        val description: TextView = findViewById(R.id.report_edit_description)
+        val status: Spinner = findViewById(R.id.spinner_status)
+        val type: Spinner = findViewById(R.id.spinner_type)
+
+        title.text = report.title
+        description.text = report.description
+
+        when(report.status){
+            ReportStatus.OPEN -> status.setSelection(0)
+            ReportStatus.PROCESSING -> status.setSelection(1)
+            ReportStatus.CLOSED -> status.setSelection(2)
+
+            else -> status.setSelection(0)
+        }
+
+        when(report.type){
+            ReportType.MECHANICAL -> type.setSelection(0)
+            ReportType.ELECTRIC -> type.setSelection(1)
+            ReportType.PAINTING -> type.setSelection(2)
+            ReportType.MASONRY -> type.setSelection(3)
+
+            else -> type.setSelection(0)
+        }
     }
 
     suspend fun saveReport(report: Report) {
         val dao = ReportDatabase.getInstance(this).reportDao()
-        lifecycleScope.launch {
-            val dao = ReportDatabase.getInstance(this@ReportActivity).reportDao()
-            dao.insert(report)
+        if (isEditMode) {
+            lifecycleScope.launch {
+                val dao = ReportDatabase.getInstance(this@ReportActivity).reportDao()
+                dao.update(report)
+            }
+        } else {
+            lifecycleScope.launch {
+                val dao = ReportDatabase.getInstance(this@ReportActivity).reportDao()
+                dao.insert(report)
+            }
         }
+
     }
 }

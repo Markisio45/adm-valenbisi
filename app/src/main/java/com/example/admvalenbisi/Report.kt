@@ -1,6 +1,7 @@
 package com.example.admvalenbisi
 
 import android.content.Context
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Database
 import androidx.room.Entity
@@ -64,9 +65,41 @@ data class Report(
     @ColumnInfo(name = "station") var station: Int?,
     @ColumnInfo(name = "status") var status: ReportStatus?,
     @ColumnInfo(name = "type") var type: ReportType?
-)
+) : Parcelable {
+    constructor(parcel: android.os.Parcel) : this(
+        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readValue(Int::class.java.classLoader) as? Int,
+        ReportStatus.fromString(parcel.readString() ?: ReportStatus.OPEN.status),
+        ReportType.fromString(parcel.readString() ?: ReportType.MECHANICAL.type)
+    )
 
-@Database( entities = [Report::class], version = 4, exportSchema = false)
+    override fun writeToParcel(parcel: android.os.Parcel, flags: Int) {
+        parcel.writeValue(id)
+        parcel.writeString(title)
+        parcel.writeString(description)
+        parcel.writeValue(station)
+        parcel.writeString(status?.status)
+        parcel.writeString(type?.type)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Report> {
+        override fun createFromParcel(parcel: android.os.Parcel): Report {
+            return Report(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Report?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
+
+@Database( entities = [Report::class], version = 5, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ReportDatabase : RoomDatabase() {
     abstract fun reportDao(): ReportDAO

@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import com.example.admvalenbisi.databinding.FragmentStationDetailsBinding
@@ -15,27 +17,23 @@ class StationDetailsFragment : Fragment() {
 
     private var _binding: FragmentStationDetailsBinding? = null
     private val binding get() = _binding!!
+    private var reports: List<Report> = emptyList()
+    private var stationId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        arguments?.let {
-//            param1 = it.getString(ARG_PARAM1)
-//            param2 = it.getString(ARG_PARAM2)
-//        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_station_details, container, false)
         _binding = FragmentStationDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-         super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, savedInstanceState)
 
         val ARG_STATION = "station"
 
@@ -48,32 +46,10 @@ class StationDetailsFragment : Fragment() {
             binding.stationDetailsAvailable?.text = view.context.getString(R.string.tag_station_available_bikes, it.availableBikes)
         }
 
-        val stationId = station?.id ?: return
+        stationId = station?.id ?: return
 
         lifecycleScope.launch {
-            val dao = ReportDatabase.getInstance(requireContext()).reportDao()
-            val reports: List<Report> = dao.getByStation( stationId)
-            val reportAdapter = ReportAdapter( reports)
-            binding.stationReportsList?.adapter = reportAdapter
-            binding.stationReportsList?.layoutManager = androidx.recyclerview.widget.LinearLayoutManager( requireContext())
-
-//            reportAdapter.onItemClick = { report ->
-//                val intent = Intent(requireContext(), ReportActivity::class.java)
-//                intent.putExtra("report", report)
-//                startActivity(intent)
-//            }
-
-            if( reports.isEmpty()) {
-                Log.d( "STATIONDETAILSFRAGMENT", "NO REPORTS")
-                binding.noReports?.visibility = View.VISIBLE
-                binding.stationReportsList?.visibility = View.GONE
-            } else {
-                Log.d( "STATIONDETAILSFRAGMENT", "SI REPORTS")
-                binding.noReports?.visibility = View.GONE
-                binding.stationReportsList?.visibility = View.VISIBLE
-            }
-
-            Log.d( "STATIONDETAILSFRAGMENT", "REPORTS: $reports")
+            updateReports()
         }
 
 
@@ -87,16 +63,36 @@ class StationDetailsFragment : Fragment() {
         Log.d( "STATIONDETAILSFRAGMENT", "STATION: $station")
     }
 
-//    fun getStationReports( stationId: Int) -> List<Report> {
-//        lifecycleScope.launch {
-//            val dao = ReportDatabase.getInstance(requireContext()).reportDao()
-//            val reports: List<Report> = dao.getByStation( stationId)
-//
-//            return reports
-//        }
-//
-//        return reports
-//    }
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            updateReports()
+        }
+    }
+
+    suspend fun updateReports(){
+        val dao = ReportDatabase.getInstance(requireContext()).reportDao()
+        reports = dao.getByStation( stationId)
+        val reportAdapter = ReportAdapter( reports, onItemClick = { report ->
+            val intent = Intent(requireContext(), ReportActivity::class.java)
+            intent.putExtra("report", report)
+            startActivity(intent)
+        })
+        binding.stationReportsList?.adapter = reportAdapter
+        binding.stationReportsList?.layoutManager = androidx.recyclerview.widget.LinearLayoutManager( requireContext())
+
+        if( reports.isEmpty()) {
+            Log.d( "STATIONDETAILSFRAGMENT", "NO REPORTS")
+            binding.noReports?.visibility = View.VISIBLE
+            binding.stationReportsList?.visibility = View.GONE
+        } else {
+            Log.d( "STATIONDETAILSFRAGMENT", "SI REPORTS")
+            binding.noReports?.visibility = View.GONE
+            binding.stationReportsList?.visibility = View.VISIBLE
+        }
+
+        Log.d( "STATIONDETAILSFRAGMENT", "REPORTS: $reports")
+    }
 
     companion object {
         /**

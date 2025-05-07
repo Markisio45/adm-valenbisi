@@ -2,6 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/reload_item"
+        android:title="Actualizar" />
+    <item
         android:id="@+id/sort_alphabetical"
         android:orderInCategory="100"
         android:title="@string/sort_alphabetical"

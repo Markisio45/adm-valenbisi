@@ -14,10 +14,12 @@ import android.widget.SearchView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.admvalenbisi.R //replace it with your package
 import com.example.admvalenbisi.StationAdapter
+import kotlinx.coroutines.launch
 import java.text.Collator
 import java.text.Normalizer
 import java.util.Locale
@@ -31,6 +33,8 @@ class MainFragment : Fragment() {
     private var originalStationList: List<Station> = listOf()
     private var filteredStationList: List<Station> = listOf()
 
+    var stations: List<Station> = emptyList()
+
     private val collator: Collator = Collator.getInstance(Locale("es", "ES")).apply {
         strength = Collator.PRIMARY // Ignora acentos y mayúsculas/minúsculas
     }
@@ -38,6 +42,7 @@ class MainFragment : Fragment() {
     // 2. Use a constant for clarity and maintainability (MEDIUM PRIORITY)
     companion object {
         const val TAG = "MainFragment"
+        private var currentMenuProvider: MenuProvider? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,21 +61,27 @@ class MainFragment : Fragment() {
         val rv: RecyclerView = view.findViewById<RecyclerView>(R.id.stationsList)
         rv.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter = StationAdapter (getStationsList(requireContext())) { station ->
-            Log.d("DEBUG", "Station clicked: $station")
-            val fragment = StationDetailsFragment.newInstance(station)
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
-                .addToBackStack(null)
-                .commit()
+        viewLifecycleOwner.lifecycleScope.launch {
+            stations = getStationsList(requireContext())
+            originalStationList = stations
+            adapter = StationAdapter(stations) { station ->
+                Log.d("DEBUG", "Station clicked: $station")
+                val fragment = StationDetailsFragment.newInstance(station)
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+            adapter.notifyDataSetChanged() // Notifica al adaptador que los datos han cambiado
+            rv.adapter = adapter // Asigna el adaptador al RecyclerView después de cargar los datos
         }
 
-        rv.adapter = adapter
+//        rv.adapter = adapter
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        originalStationList = getStationsList(requireContext())
+        originalStationList = stations
 
         val searchView: SearchView = view.findViewById<SearchView>(R.id.searchView)
         searchView.setOnClickListener {
@@ -99,18 +110,8 @@ class MainFragment : Fragment() {
             }
         })
 
-//        view.setOnTouchListener { _, _ ->
-//            view.performClick()
-//            searchView.clearFocus() // Quitar foco
-//            val imm =
-//                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//            imm.hideSoftInputFromWindow(view.windowToken, 0) // Ocultar teclado
-//            false
-//        }
-
-
         val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
+        val newMenuProvider = object : MenuProvider{
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 Log.d("FRAGMENT", "MENU: ${menu}")
                 menuInflater.inflate(R.menu.menu, menu)
@@ -123,7 +124,7 @@ class MainFragment : Fragment() {
                         sorting_bikes_desc = false
                         sorting_alphabetical_desc = !sorting_alphabetical_desc
                         sortStationsByName()
-                        Log.d("DEBUG", "Lista inicial: ${getStationsList(requireContext())}")
+                        Log.d("DEBUG", "Lista inicial: ${stations}")
 
                         true
                     }
@@ -138,17 +139,24 @@ class MainFragment : Fragment() {
                         true
                     }
 
-//                    R.id.create_report -> {
-//
-//
-//                        true
-//                    }
-
+                    R.id.reload_item -> {
+                        // Llamada a función de recarga
+                        inflateRecyclerView(view)
+                        val imm =
+                            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(searchView.windowToken, 0)
+                        searchView.setQuery("", false)
+                        searchView.clearFocus()
+                        true
+                    }
 
                     else -> false
                 }
             }
-        })
+        }
+        currentMenuProvider?.let { menuHost.removeMenuProvider(it) }
+        currentMenuProvider = newMenuProvider
+        menuHost.addMenuProvider(newMenuProvider)
 
         requireActivity().title = "Valenbisi"
 

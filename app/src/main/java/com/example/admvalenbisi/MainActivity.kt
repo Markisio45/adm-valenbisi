@@ -16,6 +16,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.commit
+import android.util.Log
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +35,8 @@ class MainActivity : AppCompatActivity() {
 //        inflateRecyclerView()
 
 //        val navHost = findNavController(R.id.fragmentContainerView)
+
+        Log.d( "Hola Mundo", "Hola Mundo")
 
         if (savedInstanceState == null) {
             // Use commit to add the fragment
@@ -51,11 +58,11 @@ class MainActivity : AppCompatActivity() {
 //
 //    }
 
-    fun inflateRecyclerView(){
-        val rv : RecyclerView = findViewById<RecyclerView>(R.id.stationsList)
-        rv.layoutManager = LinearLayoutManager( this)
-        rv.adapter = StationAdapter( getStationsList( this))
-    }
+//    fun inflateRecyclerView(){
+//        val rv : RecyclerView = findViewById<RecyclerView>(R.id.stationsList)
+//        rv.layoutManager = LinearLayoutManager( this)
+//        rv.adapter = StationAdapter( getStationsList( this))
+//    }
 
     fun navigateToDetail(){
 //        navHost.navigate(R.id.action_listFragment_to_stationFragment)
@@ -67,24 +74,66 @@ class MainActivity : AppCompatActivity() {
 
 // TODO: Filtering functions
 
-fun getStationsList(context: Context): List<Station> {
+//fun getStationsList(context: Context): List<Station> {
+//    val stationsList = mutableListOf<Station>()
+//    val jsonString = readJsonFromRaw(context, R.raw.valenbisi)
+//    try {
+//        val jsonArray = JSONArray(jsonString)
+//        for (i in 0 until jsonArray.length()) {
+//            //TODO read each item and create a Holiday instance
+//            var item = jsonArray.getJSONObject(i)
+//            var id: Int = item.getInt("number")
+//            var name: String = item.getString("address")
+//            var freeSpaces: Int = item.getInt("free")
+//            var totalSpaces: Int = item.getInt("total")
+//            var availableBikes: Int = item.getInt("available")
+//            stationsList.add(Station(id, name, availableBikes, freeSpaces, totalSpaces))
+//        }
+//    } catch (e: JSONException) {
+//        e.printStackTrace()
+//    }
+//    return stationsList
+//}
+
+suspend fun getStationsList(context: Context): List<Station> {
     val stationsList = mutableListOf<Station>()
-    val jsonString = readJsonFromRaw(context, R.raw.valenbisi)
+    val client = OkHttpClient()
+
+    // URL del JSON en internet
+    val url = "https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/valenbisi-disponibilitat-valenbisi-dsiponibilidad/exports/json?lang=es&timezone=Europe%2FBerlin"
+    Log.i("getStationsList", "URL: $url")
+    val request = Request.Builder()
+        .url(url)
+        .build()
+
     try {
-        val jsonArray = JSONArray(jsonString)
-        for (i in 0 until jsonArray.length()) {
-            //TODO read each item and create a Holiday instance
-            var item = jsonArray.getJSONObject(i)
-            var id: Int = item.getInt("number")
-            var name: String = item.getString("address")
-            var freeSpaces: Int = item.getInt("free")
-            var totalSpaces: Int = item.getInt("total")
-            var availableBikes: Int = item.getInt("available")
-            stationsList.add(Station(id, name, availableBikes, freeSpaces, totalSpaces))
+        val response = withContext(Dispatchers.IO) {
+            client.newCall(request).execute()
+        }
+        if (response.isSuccessful) {
+            val jsonString = response.body?.string()
+            if (!jsonString.isNullOrEmpty()) {
+                val jsonArray = JSONArray(jsonString)
+                for (i in 0 until jsonArray.length()) {
+                    val item = jsonArray.getJSONObject(i)
+                    val id: Int = item.getInt("number")
+                    val name: String = item.getString("address")
+                    val freeSpaces: Int = item.getInt("free")
+                    val totalSpaces: Int = item.getInt("total")
+                    val availableBikes: Int = item.getInt("available")
+                    stationsList.add(Station(id, name, availableBikes, freeSpaces, totalSpaces))
+                }
+            }
+            Log.i( "getStationsList", "Response OK:: stationsList: $stationsList")
+        } else {
+            Log.e("getStationsList", "Error en la respuesta HTTP: ${response.code}")
         }
     } catch (e: JSONException) {
-        e.printStackTrace()
+        Log.e("getStationsList", "Error al parsear JSON: ${e.message}")
+    } catch (e: Exception) {
+        Log.e("getStationsList", "Error en la solicitud HTTP: ${e}")
     }
+
     return stationsList
 }
 
